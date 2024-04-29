@@ -3,18 +3,25 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <div class="container pt-5">
-        <h1>Register</h1>
+    <header class="container text-bg-info d-flex justify-content-end gap-3 text-bg-info pb-3 pt-3">
+        <a class="btn btn-light" href="{{ path('app_login') }}">Sign in</a>
+        <a class="btn  btn-dark" href="{{ path('app_register') }}">Sign up</a>
+    </header>
+    <div class="container pt-5 col-md-4">
+        <h3>Registration</h3>
         {{ form_errors(registrationForm) }}
 
         {{ form_start(registrationForm) }}
-            {{ form_row(registrationForm.email) }}
-            {{ form_row(registrationForm.plainPassword, {
-                label: 'Password'
-            }) }}
-            {{ form_row(registrationForm.agreeTerms) }}
+            {{ form_row(registrationForm.name, {label: 'User name', 'label_attr': {'class': ' mb-3'}, 'attr' : {'class' : 'form-control mb-3'} }) }}
+            {{ form_row(registrationForm.email, {'label_attr': {'class': ' mb-3'}, 'attr' : {'class' : 'form-control mb-3'} }) }}
+            {{ form_row(registrationForm.plainPassword, { label: 'Password', 'label_attr': {'class': ' mb-3'} , 'attr' : {'class' : 'form-control mb-3'} }) }}
+            {{ form_row(registrationForm.agreeTerms, {'label_attr': {'class': ' me-3 mb-3'} }) }}
 
-            <button type="submit" class="btn btn-lg btn-primary">Register</button>
+            <div class="text-center mt-3">
+                <p>Already have account? <a href="{{ path('app_login') }}">Login here</a></p>
+            </div>
+            
+            <button type="submit" class="btn btn-lg btn-primary">Sign up</button>
         {{ form_end(registrationForm) }}
     </div>
 {% endblock %}
