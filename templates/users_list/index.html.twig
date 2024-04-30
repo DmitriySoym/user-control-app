@@ -8,18 +8,18 @@
     </header>
 
     <div class="container pb-3 pt-3">
-        <h3 class="">Hello, <span class="text-danger">{{ app.user.getName() }}</span>!</h3>
+        <h3 data-is-autheuser={{ activeUser.id }}>Hello, <span class="text-danger">{{ app.user.getName() }}</span>!</h3>
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4">Here you can manage users in App</span>
             <div class="">
                 <button class="btn mr-5 btn-danger" onclick="updateUserStatus('deleted')">
-                    <i title="delete user" class="fas fa fa-trash-alt"></i>
+                    delete <i title="delete user" class="fas fa fa-trash-alt"></i>
                 </button>
-                <button class="btn mr-5 btn-primary" onclick="updateUserStatus('block')">
-                    <i title="block user" class="fa-solid fa-user-lock"></i>
+                <button class="btn mr-5 btn-primary" onclick="updateUserStatus('blocked')">
+                    block <i title="block user" class="fa-solid fa-user-lock"></i>
                 </button>
-                <button class="btn btn-success" onclick="updateUserStatus('unblock')">
-                    <i title="unblock user" class="fa-solid fa-lock-open"></i>
+                <button class="btn btn-success" onclick="updateUserStatus('active')">
+                    activate <i title="unblock user" class="fa-solid fa-lock-open"></i>
                 </button>
             </div>
         </div>
@@ -46,32 +46,44 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.getRegisterDate|date('d M Y H:i:s') }}</td>
                     <td>{{ user.getLastLoginDate|date('d M Y H:i:s') }}</td>
-                    <td>{{ user.status }}</td>
+                    <td>
+                        {% if user.status == 'active' %}
+                            <span style="color: green"><b>active</b></span>
+                        {% else %}
+                            <span style="color: blue"><b>blocked</b></span>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
 
         <script>
+            let signedInUser = document.querySelector('h3');
+
             function selectAllUsers(status) {
+                
                 checkboxes = document.querySelectorAll('input[name="selectedUser"]');
                 checkboxes.forEach(checkbox => checkbox.checked = document.getElementById('select-all').checked);
             }
 
             function updateUserStatus(status) {
-                const selectedIds = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(cb => cb.value);
+                const selectedIds = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(item => item.value);
+
                 fetch('/users/update', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token('update_user_status') }}'
                     },
                     body: JSON.stringify({ ids: selectedIds, status: status })
                 }).then(response => {
                     if (response.ok) {
+                        if(selectedIds.includes(signedInUser.dataset.isAutheuser)) {
+                            window.location.href='/logout';
+                        }
                         window.location.reload();
                     } else {
-                        alert('Failed to update users.');
+                        alert('Error update');
                     }
                 });
             }
