@@ -14,8 +14,10 @@ class UserFixtures extends Fixture
         // $manager->persist($product);
         $user = new User();
         $user->setEmail('admin@admin.com');
+        $user->setName('admin');
         $user->setPassword('$2y$13$IHcOCqHXna0q/2z34ewVDOAK0V0ouzdpbuSCgL/GZpln/AdWhoxIK');
         $user->setRoles(['ROLE_USER']);
+        $user->setRegisterDate(new \DateTime());
 
         $manager->persist($user);
 
